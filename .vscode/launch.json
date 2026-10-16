@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    { "name": "Backend (uvicorn, SQLite)", "type": "debugpy", "request": "launch", "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"], "cwd": "${workspaceFolder}/backend", "jinja": true },
+    { "name": "Agent: attack chain", "type": "debugpy", "request": "launch", "program": "${workspaceFolder}/agent/agent.py",
+      "args": ["--hostname", "fin-ws-04", "--attack"], "cwd": "${workspaceFolder}/agent" },
+    { "name": "Backend tests", "type": "debugpy", "request": "launch", "module": "pytest", "args": ["tests", "-v"],
+      "cwd": "${workspaceFolder}/backend", "env": { "PYTHONPATH": "." } }
+  ]
+}
