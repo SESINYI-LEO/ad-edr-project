@@ -1,0 +1,29 @@
+id,kind,name,technique,expected,alerted,result,extra_rules,ingest_rtt_ms,send_to_alert_ms
+A01,attack,Encoded PowerShell,T1059.001,R001,R001,TP,,89.1,58.9
+A02,attack,Word macro spawns PowerShell,T1204.002,R002,R002,TP,,42.2,17.6
+A03,attack,LSASS memory access,T1003.001,R003,R003,TP,,42.2,18.5
+A04,attack,Run key persistence,T1547.001,R004,R004,TP,,39.2,19.4
+A05,attack,Scheduled task persistence,T1053.005,R005,R005,TP,,39.7,18.2
+A06,attack,Shadow copy deletion,T1490,R006,R006,TP,,79.4,27.9
+A07,attack,certutil download,T1105,R007,R007,TP,,54.1,27.4
+A08,attack,Domain admin discovery,T1087.002,R008,R008,TP,,99.5,20.4
+A09,attack,Brute-force logons,T1110,R009,R009,TP,,48.8,23.9
+A10,attack,Ransomware mass encryption,T1486,R010,R010,TP,,78.2,37.1
+A11,attack,Event log cleared,T1070.001,R011,R011,TP,,51.7,25.2
+A12,attack,PowerShell to public IP,T1071.001,R012,R012,TP,,63.8,22.4
+A13,attack,SAM hive export,T1003.002,R013,R013,TP,,176.5,36.2
+A14,attack,Add local administrator,T1098,R014,R014,TP,,73.2,34.7
+A15,attack,Multi-stage intrusion (phish -> persist -> dump -> ransom prep),chain,"R002,R003,R004,R006","R002,R003,R004,R006",TP,,69.3,20.6
+B01,benign,Plain PowerShell script,-,,,TN,,150.7,
+B02,benign,Defender reads LSASS,-,,,TN,,20.4,
+B03,benign,OneDrive Run key,-,,,TN,,26.0,
+B04,benign,schtasks query,-,,,TN,,30.2,
+B05,benign,PowerShell to internal server,-,,,TN,,40.9,
+B06,benign,Word saves documents,-,,,TN,,41.3,
+B07,benign,Three mistyped passwords,-,,,TN,,39.4,
+B08,benign,certutil verifies a certificate,-,,,TN,,31.7,
+B09,benign,whoami,-,,,TN,,44.0,
+B10,benign,Office child: splwow64 printing,-,,,TN,,103.9,
+B11,benign,Installer writes Run key,-,,,TN,,34.5,
+B12,benign,Local group listing,-,,,TN,,33.2,
+B13,benign,Service account activity (system),-,,,TN,,26.6,

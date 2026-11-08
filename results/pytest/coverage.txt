@@ -1,0 +1,32 @@
+Name                             Stmts   Miss Branch BrPart  Cover
+------------------------------------------------------------------
+agent/edr_agent/__init__.py          0      0      0      0   100%
+agent/edr_agent/client.py           86     11     16      2    87%
+agent/edr_agent/collector.py        44     27     12      1    32%
+agent/edr_agent/config.py           36      0     10      1    98%
+agent/edr_agent/main.py             53     37     18      2    25%
+agent/edr_agent/sysmon.py           36      0     16      0   100%
+server/app/__init__.py               0      0      0      0   100%
+server/app/ad.py                   167     16     46      3    91%
+server/app/audit.py                 33      1      6      1    95%
+server/app/backup.py                93     10     26      4    85%
+server/app/biometric.py            100      3     28      3    95%
+server/app/config.py                39      0      0      0   100%
+server/app/db.py                    30      6      8      3    71%
+server/app/deps.py                  10      1      0      0    90%
+server/app/detection.py            103      3     38      1    97%
+server/app/ingest.py               139      0     44      2    99%
+server/app/main.py                  68      8     12      2    82%
+server/app/models.py               171      0      0      0   100%
+server/app/routes/__init__.py        0      0      0      0   100%
+server/app/routes/admin.py          87      3      8      1    96%
+server/app/routes/agent.py          53      0      6      0   100%
+server/app/routes/auth.py          181     16     32      7    89%
+server/app/routes/incidents.py     114      4     32      5    94%
+server/app/routes/ops.py           140      7     38      5    93%
+server/app/security.py              62      3     12      1    95%
+server/app/serialize.py             29      0      8      0   100%
+server/app/tickets.py               19      1      6      1    92%
+server/app/tools.py                 60      8     12      3    85%
+------------------------------------------------------------------
+TOTAL                             1953    165    434     48    90%

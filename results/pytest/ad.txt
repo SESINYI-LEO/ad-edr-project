@@ -1,0 +1,38 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /usr/bin/python
+rootdir: /home/claude/edr
+tests/test_ad.py::test_sid_from_bytes_decodes_binary_object_sid PASSED
+tests/test_ad.py::test_privilege_from_groups[groups0-standard] PASSED
+tests/test_ad.py::test_privilege_from_groups[groups1-standard] PASSED
+tests/test_ad.py::test_privilege_from_groups[groups2-admin] PASSED
+tests/test_ad.py::test_privilege_from_groups[groups3-admin] PASSED
+tests/test_ad.py::test_privilege_from_groups[groups4-elevated] PASSED
+tests/test_ad.py::test_privilege_from_groups[groups5-elevated] PASSED
+tests/test_ad.py::test_privilege_from_groups[groups6-admin] PASSED
+tests/test_ad.py::test_privilege_from_groups[groups7-standard] PASSED
+tests/test_ad.py::test_parse_account[LAB\\jsmith-expected0] PASSED
+tests/test_ad.py::test_parse_account[jsmith@lab.local-expected1] PASSED
+tests/test_ad.py::test_parse_account[jsmith-expected2] PASSED
+tests/test_ad.py::test_parse_account[  LAB\\jsmith -expected3] PASSED
+tests/test_ad.py::test_parse_account[None-expected4] PASSED
+tests/test_ad.py::test_parse_account[-expected5] PASSED
+tests/test_ad.py::test_is_system_account[NT AUTHORITY-SYSTEM-True] PASSED
+tests/test_ad.py::test_is_system_account[None-LOCAL SERVICE-True] PASSED
+tests/test_ad.py::test_is_system_account[LAB-WS-01$-True] PASSED
+tests/test_ad.py::test_is_system_account[LAB-jsmith-False] PASSED
+tests/test_ad.py::test_is_system_account[None-None-True] PASSED
+tests/test_ad.py::test_is_system_account[NT SERVICE-TrustedInstaller-True] PASSED
+tests/test_ad.py::test_lookup_by_account_returns_identity PASSED
+tests/test_ad.py::test_lookup_by_sid_matches_account_lookup PASSED
+tests/test_ad.py::test_disabled_account_is_flagged PASSED
+tests/test_ad.py::test_lookup_unknown_or_injection_returns_none[nobody] PASSED
+tests/test_ad.py::test_lookup_unknown_or_injection_returns_none[] PASSED
+tests/test_ad.py::test_lookup_unknown_or_injection_returns_none[*] PASSED
+tests/test_ad.py::test_lookup_unknown_or_injection_returns_none[x)(objectClass=*] PASSED
+tests/test_ad.py::test_lookup_unknown_or_injection_returns_none[jsmith)(|(sAMAccountName=*] PASSED
+tests/test_ad.py::test_lookup_rejects_malformed_sid PASSED
+tests/test_ad.py::test_authenticate_binds_as_user PASSED
+tests/test_ad.py::test_resolve_identity_resolved_then_cached PASSED
+tests/test_ad.py::test_resolve_identity_system_unknown_and_sid_paths PASSED
+tests/test_ad.py::test_directory_outage_falls_back_to_cache_or_marks_error PASSED
+======================== 34 passed, 3 warnings in 0.49s ========================

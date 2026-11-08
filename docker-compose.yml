@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: edr_user
+      POSTGRES_PASSWORD: edr_pass
+      POSTGRES_DB: edr_db
+    volumes:
+      - edr_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edr_user -d edr_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg2://edr_user:edr_pass@db:5432/edr_db
+      SECRET_KEY: change-this-to-a-long-random-string-of-32+chars
+      ADMIN_PASSWORD: ChangeMe123!
+      AGENT_API_KEY: agent-dev-key-change-me
+      CORS_ORIGINS: http://localhost:5173
+      PUBLIC_BASE_URL: http://localhost:5173
+      BACKUP_DIR: /backups
+    volumes:
+      - edr_backups:/backups
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  dashboard:
+    build: ./dashboard
+    environment:
+      VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  # Simulated endpoint: benign activity every 4s. To run the scripted attack chain once:
+  #   docker compose run --rm agent python agent.py --server http://backend:8000 --hostname fin-ws-04 --attack
+  agent:
+    build: ./agent
+    environment:
+      EDR_SERVER: http://backend:8000
+      EDR_AGENT_KEY: agent-dev-key-change-me
+    command: ["python", "agent.py", "--hostname", "demo-ws-01", "--interval", "4"]
+    depends_on:
+      - backend
+
+volumes:
+  edr_pg_data:
+  edr_backups:

@@ -1,0 +1,141 @@
+{
+  "domain": "lab.local",
+  "users": [
+    {
+      "sam": "jsmith",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1105",
+      "display_name": "John Smith",
+      "department": "Finance",
+      "groups": [
+        "Domain Users"
+      ],
+      "password": "Fin@nce-2026",
+      "uac": 512,
+      "dn": "CN=John Smith,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "mdlamini",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1106",
+      "display_name": "Mpho Dlamini",
+      "department": "Human Resources",
+      "groups": [
+        "Domain Users"
+      ],
+      "password": "Hr@lab-2026",
+      "uac": 512,
+      "dn": "CN=Mpho Dlamini,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "kmotsumi",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1107",
+      "display_name": "Kabo Motsumi",
+      "department": "Sales",
+      "groups": [
+        "Domain Users"
+      ],
+      "password": "Sales@lab-2026",
+      "uac": 512,
+      "dn": "CN=Kabo Motsumi,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "tkgosi",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1108",
+      "display_name": "Tebogo Kgosi",
+      "department": "IT",
+      "groups": [
+        "Domain Users",
+        "Domain Admins"
+      ],
+      "password": "Adm1n@lab-2026",
+      "uac": 512,
+      "dn": "CN=Tebogo Kgosi,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "svc_backup",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1109",
+      "display_name": "Backup Service",
+      "department": "IT",
+      "groups": [
+        "Domain Users",
+        "Backup Operators"
+      ],
+      "password": "Bkp@lab-2026",
+      "uac": 512,
+      "dn": "CN=Backup Service,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "lmokoena",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1110",
+      "display_name": "Lerato Mokoena",
+      "department": "Finance",
+      "groups": [
+        "Domain Users"
+      ],
+      "password": "Fin2@lab-2026",
+      "uac": 512,
+      "dn": "CN=Lerato Mokoena,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "rseretse",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1111",
+      "display_name": "Roy Seretse",
+      "department": "Operations",
+      "groups": [
+        "Domain Users",
+        "Server Operators"
+      ],
+      "password": "Ops@lab-2026",
+      "uac": 512,
+      "dn": "CN=Roy Seretse,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "analyst01",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1112",
+      "display_name": "Neo Analyst",
+      "department": "Security",
+      "groups": [
+        "Domain Users"
+      ],
+      "password": "Analyst@lab-2026",
+      "uac": 512,
+      "dn": "CN=Neo Analyst,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "admin01",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1113",
+      "display_name": "Sam Administrator",
+      "department": "Security",
+      "groups": [
+        "Domain Users",
+        "Domain Admins"
+      ],
+      "password": "SecAdmin@lab-2026",
+      "uac": 512,
+      "dn": "CN=Sam Administrator,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "pkhumalo",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1114",
+      "display_name": "Palesa Khumalo",
+      "department": "Legal",
+      "groups": [
+        "Domain Users"
+      ],
+      "password": "Legal@lab-2026",
+      "uac": 512,
+      "dn": "CN=Palesa Khumalo,CN=Users,DC=lab,DC=local"
+    },
+    {
+      "sam": "odisabled",
+      "sid": "S-1-5-21-1004336348-1177238915-682003330-1115",
+      "display_name": "Old Account",
+      "department": "Sales",
+      "groups": [
+        "Domain Users"
+      ],
+      "password": "Old@lab-2026",
+      "uac": 514,
+      "dn": "CN=Old Account,CN=Users,DC=lab,DC=local"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /usr/bin/python
+rootdir: /home/claude/edr
+tests/test_detection.py::test_all_rules_load_and_are_mapped_to_attack PASSED
+tests/test_detection.py::test_condition_operators[cond0-ev0-True] PASSED
+tests/test_detection.py::test_condition_operators[cond1-ev1-False] PASSED
+tests/test_detection.py::test_condition_operators[cond2-ev2-True] PASSED
+tests/test_detection.py::test_condition_operators[cond3-ev3-True] PASSED
+tests/test_detection.py::test_condition_operators[cond4-ev4-False] PASSED
+tests/test_detection.py::test_condition_operators[cond5-ev5-True] PASSED
+tests/test_detection.py::test_condition_operators[cond6-ev6-False] PASSED
+tests/test_detection.py::test_condition_operators[cond7-ev7-True] PASSED
+tests/test_detection.py::test_condition_operators[cond8-ev8-False] PASSED
+tests/test_detection.py::test_condition_operators[cond9-ev9-True] PASSED
+tests/test_detection.py::test_condition_operators[cond10-ev10-True] PASSED
+tests/test_detection.py::test_condition_operators[cond11-ev11-False] PASSED
+tests/test_detection.py::test_condition_operators[cond12-ev12-True] PASSED
+tests/test_detection.py::test_condition_operators[cond13-ev13-True] PASSED
+tests/test_detection.py::test_condition_operators[cond14-ev14-False] PASSED
+tests/test_detection.py::test_condition_operators[cond15-ev15-False] PASSED
+tests/test_detection.py::test_condition_operators[cond16-ev16-False] PASSED
+tests/test_detection.py::test_condition_operators[cond17-ev17-False] PASSED
+tests/test_detection.py::test_condition_operators[cond18-ev18-False] PASSED
+tests/test_detection.py::test_condition_operators[cond19-ev19-False] PASSED
+tests/test_detection.py::test_loader_rejects_bad_severity_and_operator PASSED
+tests/test_detection.py::test_brute_force_threshold_boundary[4-True-False] PASSED
+tests/test_detection.py::test_brute_force_threshold_boundary[5-True-True] PASSED
+tests/test_detection.py::test_brute_force_threshold_boundary[6-True-True] PASSED
+tests/test_detection.py::test_brute_force_outside_window_does_not_fire PASSED
+tests/test_detection.py::test_brute_force_is_per_user_and_per_host PASSED
+tests/test_detection.py::test_ransomware_threshold_boundary[19-False] PASSED
+tests/test_detection.py::test_ransomware_threshold_boundary[20-True] PASSED
+tests/test_detection.py::test_ransomware_threshold_boundary[21-True] PASSED
+tests/test_detection.py::test_ransomware_slow_encryption_outside_window_does_not_fire PASSED
+tests/test_detection.py::test_threshold_rule_fires_once_per_burst PASSED
+tests/test_detection.py::test_disabled_rule_does_not_fire PASSED
+tests/test_detection.py::test_encoded_powershell_regex_variants PASSED
+======================== 34 passed, 3 warnings in 0.21s ========================

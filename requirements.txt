@@ -1,0 +1,13 @@
+fastapi>=0.110
+uvicorn>=0.29
+SQLAlchemy>=2.0
+psycopg2-binary>=2.9
+pydantic>=2.6
+PyYAML>=6.0
+ldap3>=2.9
+cryptography>=42
+PyJWT>=2.8
+qrcode>=7.4
+pillow>=10
+python-multipart>=0.0.9
+requests>=2.31

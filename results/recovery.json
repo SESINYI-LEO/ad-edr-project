@@ -1,0 +1,22 @@
+{
+ "backup_id": 3,
+ "size_bytes": 770082,
+ "backup_s": 1.176,
+ "verify_s": 0.307,
+ "restore_s": 1.633,
+ "verify": {
+  "ok": true,
+  "tables": 13,
+  "rows": 10480,
+  "created_at": "2026-10-23T09:52:24.816159"
+ },
+ "restore": {
+  "restored_rows": 10480,
+  "audit_chain_ok": true
+ },
+ "audit_after_restore": {
+  "ok": true,
+  "checked": 197,
+  "broken_at": null
+ }
+}

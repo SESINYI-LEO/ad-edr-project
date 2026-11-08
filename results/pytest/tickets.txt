@@ -1,0 +1,49 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /usr/bin/python
+rootdir: /home/claude/edr
+tests/test_tickets.py::test_label_always_matches_threshold_over_entire_input_space PASSED
+tests/test_tickets.py::test_high_boundary[45-High] PASSED
+tests/test_tickets.py::test_high_boundary[40-Medium] PASSED
+tests/test_tickets.py::test_medium_boundary[35-Medium] PASSED
+tests/test_tickets.py::test_medium_boundary[30-Low] PASSED
+tests/test_tickets.py::test_priority_is_monotonic_in_each_factor PASSED
+tests/test_tickets.py::test_admin_account_outranks_standard_user_for_same_alert PASSED
+tests/test_tickets.py::test_inputs_are_clamped_and_validated PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[New-New] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[New-Assigned] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[New-Under Investigation] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[New-Escalated] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[New-Resolved] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[New-Closed] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Assigned-New] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Assigned-Assigned] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Assigned-Under Investigation] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Assigned-Escalated] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Assigned-Resolved] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Assigned-Closed] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Under Investigation-New] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Under Investigation-Assigned] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Under Investigation-Under Investigation] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Under Investigation-Escalated] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Under Investigation-Resolved] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Under Investigation-Closed] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Escalated-New] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Escalated-Assigned] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Escalated-Under Investigation] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Escalated-Escalated] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Escalated-Resolved] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Escalated-Closed] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Resolved-New] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Resolved-Assigned] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Resolved-Under Investigation] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Resolved-Escalated] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Resolved-Resolved] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Resolved-Closed] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Closed-New] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Closed-Assigned] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Closed-Under Investigation] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Closed-Escalated] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Closed-Resolved] PASSED
+tests/test_tickets.py::test_state_machine_exhaustive[Closed-Closed] PASSED
+tests/test_tickets.py::test_unknown_state_has_no_transitions PASSED
+======================== 45 passed, 3 warnings in 0.05s ========================

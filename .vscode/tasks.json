@@ -1,0 +1,8 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    { "label": "Run tests", "type": "shell", "command": "cd backend && python -m pytest tests -q", "options": { "env": { "PYTHONPATH": "." } }, "group": "test" },
+    { "label": "Dashboard dev server", "type": "shell", "command": "cd dashboard && npm run dev", "isBackground": true },
+    { "label": "Whole stack (Docker)", "type": "shell", "command": "docker compose up --build" }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "generated": "2026-11-02T18:28:53.945932+00:00",
+  "detection": {
+    "attacks": 15,
+    "benign": 13,
+    "TP": 15,
+    "FN": 0,
+    "FP": 0,
+    "TN": 13,
+    "precision": 1.0,
+    "recall": 1.0,
+    "false_positive_rate": 0.0,
+    "attribution_correct": 0,
+    "attribution_total": 18,
+    "attribution_accuracy": 0.0,
+    "detect_latency_ms": {
+      "mean": 69.8,
+      "median": 63.8,
+      "p95": 122.6,
+      "max": 176.5
+    }
+  },
+  "response": {
+    "incidents_driven": 12,
+    "mean_s": 4.916,
+    "median_s": 4.915,
+    "max_s": 6.578
+  },
+  "biometric_negative": {
+    "wrong_fingerprint_result": {
+      "ok": false,
+      "stage": "biometric",
+      "status": "failed"
+    },
+    "action_with_failed_verification_http": 403,
+    "action_without_verification_http": 403
+  },
+  "throughput": {
+    "events": 10000,
+    "batches": 20,
+    "batch_size": 500,
+    "seconds": 11.92,
+    "events_per_second": 839.2,
+    "batch_latency_ms": {
+      "median": 473.0,
+      "p95": 1159.0,
+      "max": 1360.2
+    },
+    "false_alerts_from_noise": 0
+  },
+  "audit_chain": {
+    "ok": true,
+    "checked": 142,
+    "broken_at": null
+  }
+}

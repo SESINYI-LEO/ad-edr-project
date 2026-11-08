@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.7.0 -- /usr/bin/python
+rootdir: /home/claude/edr
+tests/test_biometric.py::test_isolation_succeeds_after_verified_biometric_and_agent_is_told PASSED
+tests/test_biometric.py::test_response_action_without_verification_is_denied_and_audited PASSED
+tests/test_biometric.py::test_biometric_mismatch_blocks_action PASSED
+tests/test_biometric.py::test_unscanned_pending_verification_is_not_enough PASSED
+tests/test_biometric.py::test_expired_verification_cannot_be_scanned_or_used PASSED
+tests/test_biometric.py::test_verification_is_single_use_replay_rejected PASSED
+tests/test_biometric.py::test_verification_for_one_operation_cannot_authorise_another PASSED
+tests/test_biometric.py::test_qr_code_never_contains_the_challenge_and_server_stores_no_biometrics PASSED
+tests/test_biometric.py::test_scan_with_wrong_nonce_or_wrong_device_is_denied PASSED
+tests/test_biometric.py::test_signature_from_wrong_key_fails_verification PASSED
+tests/test_biometric.py::test_complete_before_scan_and_garbage_signature PASSED
+tests/test_biometric.py::test_admin_without_enrolled_device_cannot_initiate PASSED
+tests/test_biometric.py::test_malformed_purposes_rejected[rm -rf /] PASSED
+tests/test_biometric.py::test_malformed_purposes_rejected[response_action:x:isolate_endpoint] PASSED
+tests/test_biometric.py::test_malformed_purposes_rejected[tool:] PASSED
+tests/test_biometric.py::test_malformed_purposes_rejected[backup:restore:abc] PASSED
+tests/test_biometric.py::test_malformed_purposes_rejected[rule:R1:disable] PASSED
+tests/test_biometric.py::test_verification_status_only_visible_to_owner PASSED
+tests/test_biometric.py::test_release_and_flag_actions PASSED
+tests/test_biometric.py::test_disabling_a_rule_needs_verification_and_stops_detection PASSED
+tests/test_biometric.py::test_backup_requires_verification PASSED
+tests/test_biometric.py::test_backup_verify_and_restore_round_trip PASSED
+tests/test_biometric.py::test_tampered_backup_is_detected_and_restore_refused PASSED
+tests/test_biometric.py::test_missing_backup_file_and_unknown_backup PASSED
+tests/test_biometric.py::test_backup_file_is_encrypted PASSED
+tests/test_biometric.py::test_tools_require_verification_and_are_allowlisted PASSED
+tests/test_biometric.py::test_tool_arguments_are_validated[tcp_check-args0] PASSED
+tests/test_biometric.py::test_tool_arguments_are_validated[tcp_check-args1] PASSED
+tests/test_biometric.py::test_tool_arguments_are_validated[tcp_check-args2] PASSED
+tests/test_biometric.py::test_tool_arguments_are_validated[dns_resolve-args3] PASSED
+tests/test_biometric.py::test_tool_arguments_are_validated[ad_lookup-args4] PASSED
+tests/test_biometric.py::test_tool_arguments_are_validated[endpoint_status-args5] PASSED
+tests/test_biometric.py::test_tool_results PASSED
+======================== 33 passed, 3 warnings in 8.75s ========================
