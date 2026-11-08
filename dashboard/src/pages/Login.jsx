@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { errMsg, login } from '../api/client.js'
 
 export default function Login() {
@@ -9,7 +9,7 @@ export default function Login() {
   const nav = useNavigate()
   async function submit(e) {
     e.preventDefault()
-    try { await login(u, p); nav('/') } catch (x) { setErr(errMsg(x)) }
+    try { const user = await login(u, p); nav(user.must_change_password ? '/account' : '/') } catch (x) { setErr(errMsg(x)) }
   }
   return (
     <div className="login-wrap">
@@ -19,6 +19,7 @@ export default function Login() {
         <div className="field"><label>Password</label><input type="password" value={p} onChange={(e) => setP(e.target.value)} /></div>
         <button className="btn-primary" type="submit">Sign in</button>
         {err && <div className="error-text">{err}</div>}
+        <div style={{ marginTop: 14, textAlign: 'center' }}><Link to="/forgot" className="link">Forgot password?</Link></div>
       </form>
     </div>
   )

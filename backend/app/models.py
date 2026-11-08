@@ -70,6 +70,15 @@ class SystemUser(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     biometric_template_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)  # protected reference, never raw data
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    # Authenticator app (TOTP). The secret must be recoverable to check codes, so it is encrypted at rest (see security.py).
+    totp_secret_enc: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    totp_pending_enc: Mapped[str | None] = mapped_column(String(512), nullable=True)  # set while enrolment is awaiting its first code
+    totp_last_step: Mapped[int | None] = mapped_column(Integer, nullable=True)         # last accepted 30 s step: a code works once
+    # Password lifecycle. All nullable so create_all / add_missing_columns can upgrade an existing database in place.
+    password_changed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)  # tokens issued before this are rejected
+    must_change_password: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    recovery_failures: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    recovery_locked_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
 
 class Endpoint(Base):

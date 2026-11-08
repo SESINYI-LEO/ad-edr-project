@@ -311,3 +311,12 @@ pre.report { white-space: pre-wrap; font-family: var(--font-mono); font-size: 12
 .flash { padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 12px; background: var(--panel-raised); border: 1px solid var(--border); }
 .flash.err { color: var(--critical); border-color: var(--critical-dim); }
 .flash.ok { color: var(--accent); }
+
+/* ---- accounts ---- */
+.link { color: var(--accent); font-size: 12px; }
+.link:hover { text-decoration: underline; }
+.steps { margin: 0 0 12px; padding-left: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+.secret-key { font-family: var(--font-mono); font-size: 13px; letter-spacing: .08em; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 6px 10px; display: inline-block; user-select: all; word-break: break-all; }
+.form-narrow { max-width: 360px; }
+.setup-row { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+.temp-pass { font-family: var(--font-mono); font-size: 16px; letter-spacing: .06em; user-select: all; }

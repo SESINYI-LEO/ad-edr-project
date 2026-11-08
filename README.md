@@ -36,7 +36,7 @@ python agent.py --hostname fin-ws-04 --attack          # or without --attack for
 
 ### Tests
 ```bash
-cd backend && PYTHONPATH=. python -m pytest tests -v     # 13 end-to-end tests (also verified against PostgreSQL 16)
+cd backend && PYTHONPATH=. python -m pytest tests -v     # 28 end-to-end tests (the original 13 were also verified against PostgreSQL 16)
 cd agent && python -m pytest tests -q                    # Sysmon event parser
 ```
 
@@ -45,12 +45,33 @@ cd agent && python -m pytest tests -q                    # Sysmon event parser
 2. **Alerts** → click a row: evidence shows the AD user (e.g. `tshepo`, Domain Admin) behind each event.
 3. **Tickets** → *Take* → *Escalate*: an incident is created (ticket: Under Investigation → Escalated).
 4. **Incident** → *Start investigating* → choose `isolate_endpoint` → *Execute…*
-   A QR modal appears. Scan it, or use the dev simulator box and enter `demo-fingerprint`.
+   A verification modal appears. If you have set up an authenticator app (see below), type its 6-digit code; otherwise use the dev simulator box and enter `demo-fingerprint`.
    The incident becomes **Contained**, the endpoint **Isolated**, and the action is audited. Reusing the verification fails.
 5. *Mark resolved* → *Generate report* → *Close incident* (closing without a report is refused).
 6. **Overview** now shows MTTD / MTTR. **Audit trail** shows every step, including denied attempts.
 7. **Backup & restore**, **Detection rules**, **Security terminal** all demand the same QR + biometric step.
 
+## Accounts: authenticator app, passwords, reset
+**Authenticator app (the real second factor).** Sign in → **My account** → *Set up authenticator*. Enter your password, scan the QR code with
+Microsoft Authenticator (**+ → Other account (Google, Facebook, etc.)**), Google Authenticator, Authy, 1Password or any TOTP app, then type the 6-digit code to confirm.
+From then on the QR + biometric prompt asks for the current code instead of the dev reference. Turn on the app's own fingerprint/face lock on the phone.
+Codes are standard RFC 6238 (SHA-1, 6 digits, 30 s), each works once, and the secret is stored encrypted (keyed from `SECRET_KEY`: if you change `SECRET_KEY`, users must re-enrol).
+Replacing or removing an authenticator needs the password and a current code.
+
+**Passwords**
+- *Change*: **My account** → *Change password* (needs the current password). All other sessions for that account are signed out.
+- *Forgot*: **Sign in → Forgot password?** resets with a current authenticator code. Accounts without an authenticator ask an administrator.
+- *Admin*: **Users** page (administrators) to edit email/role, deactivate, *Reset password…* (shows a one-time temporary password; the user must change it at next sign-in and their old sessions end) and *Reset authenticator…* (lost phone). Role/active changes and resets need the QR + biometric step (`user_admin`).
+- Repeated wrong passwords/codes on these endpoints lock them for 15 minutes (`RECOVERY_MAX_ATTEMPTS`, `RECOVERY_LOCKOUT_MINUTES`). Signing in itself is not affected.
+- *Break-glass* (nobody can sign in, e.g. the only admin lost their phone and password): on the server run `cd backend && python -m app.cli reset-password admin` and/or `python -m app.cli reset-authenticator admin`. Use the same `DATABASE_URL`. Docker: `docker compose exec backend python -m app.cli reset-password admin`.
+
+`BIOMETRIC_MODE`: `both` (default: authenticator if enrolled, otherwise the dev reference), `totp` (authenticator only; **use this outside the lab**, it ignores the demo `demo-fingerprint` reference), `simulated` (dev reference only).
+Existing databases are upgraded automatically on start (new columns are added in place).
+
+**Limitations of the account features**
+- **The "biometric" is your authenticator app, not the server reading a fingerprint.** The QR/transaction flow, expiry, attempt limits, single-use and audit are real, and the second factor is a TOTP code from an app the phone protects with its own biometric lock. The server never sees biometric data. Without an enrolled authenticator the dev reference (`demo-fingerprint`) still works unless `BIOMETRIC_MODE=totp`. Passkeys/WebAuthn (phone or laptop fingerprint straight in the browser) are not implemented; a verifier would slot into `_verify_biometric` in `services/auth_tx.py`.
+- **No email-based password reset** (there is no mail server in the prototype). Self-service reset uses the authenticator code; otherwise an administrator or the CLI resets it.
+- **Sign-in itself has no lockout/rate limit** (unchanged); put a reverse proxy rate limit in front before real use.
 
 ## Real Windows endpoint (Sysmon)
 On a Windows VM with Sysmon installed, run from an elevated prompt:

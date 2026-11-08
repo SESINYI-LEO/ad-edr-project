@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { currentUser } from '../api/client.js'
+import { currentUser, isAdmin } from '../api/client.js'
 import Ticker from './Ticker.jsx'
 
 const NAV = [
@@ -7,6 +7,8 @@ const NAV = [
   ['/events', 'Event timeline'], ['/identity', 'AD identity'], ['/rules', 'Detection rules'], ['/audit', 'Audit trail'],
   ['/backups', 'Backup & restore'], ['/terminal', 'Security terminal'],
 ]
+const ADMIN_NAV = [['/users', 'Users']]
+const ACCOUNT_NAV = [['/account', 'My account']]
 
 export default function Shell() {
   const nav = useNavigate()
@@ -16,7 +18,7 @@ export default function Shell() {
       <aside className="sidebar">
         <div className="brand">SENTRY<span>_</span>EDR</div>
         <nav style={{ flex: 1 }}>
-          {NAV.map(([to, label, end]) => (
+          {[...NAV, ...(isAdmin() ? ADMIN_NAV : []), ...ACCOUNT_NAV].map(([to, label, end]) => (
             <NavLink key={to} to={to} end={end} className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}>{label}</NavLink>
           ))}
         </nav>
@@ -25,7 +27,10 @@ export default function Shell() {
           <button className="btn ghost" style={{ width: '100%' }} onClick={() => { localStorage.clear(); nav('/login') }}>Log out</button>
         </div>
       </aside>
-      <main className="main"><Ticker /><Outlet /></main>
+      <main className="main">
+        {u?.must_change_password && <div className="flash err">You are using a temporary password. Change it under <b>My account</b> to continue.</div>}
+        <Ticker /><Outlet />
+      </main>
     </div>
   )
 }
