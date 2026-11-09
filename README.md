@@ -53,3 +53,20 @@ python -m pytest -q tests --cov=server/app --cov=agent/edr_agent --cov-branch --
 | `simulation/`             | Attack scenarios with ground truth, evaluation harness, screenshot script                                                                            |
 | `tests/`                  | Unit, integration, black-box, white-box and scenario tests                                                                                           |
 | `docs/`                   | `INSTALL.md` (incl. Windows endpoint, real AD, PostgreSQL, Docker), `USER_MANUAL.md`                                                                 |
+
+## Accounts (backend/ + dashboard/): authenticator app, passwords, reset
+**Authenticator app (the real second factor).** Sign in → **My account** → *Set up authenticator*. Enter your password, scan the QR code with
+Microsoft Authenticator (**+ → Other account (Google, Facebook, etc.)**), Google Authenticator, Authy, 1Password or any TOTP app, then type the 6-digit code to confirm.
+From then on the QR + biometric prompt asks for the current code instead of the dev reference. Turn on the app's own fingerprint/face lock on the phone.
+Codes are standard RFC 6238 (SHA-1, 6 digits, 30 s), each works once, and the secret is stored encrypted (keyed from `SECRET_KEY`: if you change `SECRET_KEY`, users must re-enrol).
+Replacing or removing an authenticator needs the password and a current code.
+
+**Passwords**
+- *Change*: **My account** → *Change password* (needs the current password). All other sessions for that account are signed out.
+- *Forgot*: **Sign in → Forgot password?** resets with a current authenticator code. Accounts without an authenticator ask an administrator.
+- *Admin*: **Users** page (administrators) to edit email/role, deactivate, *Reset password…* (shows a one-time temporary password; the user must change it at next sign-in and their old sessions end) and *Reset authenticator…* (lost phone). Role/active changes and resets need the QR + biometric step (`user_admin`).
+- Repeated wrong passwords/codes on these endpoints lock them for 15 minutes (`RECOVERY_MAX_ATTEMPTS`, `RECOVERY_LOCKOUT_MINUTES`). Signing in itself is not affected.
+- *Break-glass* (nobody can sign in, e.g. the only admin lost their phone and password): on the server run `cd backend && python -m app.cli reset-password admin` and/or `python -m app.cli reset-authenticator admin`. Use the same `DATABASE_URL`. Docker: `docker compose exec backend python -m app.cli reset-password admin`.
+
+`BIOMETRIC_MODE` (in `backend/.env`): `both` (default: authenticator if enrolled, otherwise the dev reference), `totp` (authenticator only; **use this outside the lab**, it ignores the demo `demo-fingerprint` reference), `simulated` (dev reference only).
+Existing databases are upgraded automatically on start (new columns are added in place).
