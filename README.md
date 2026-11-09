@@ -1,6 +1,6 @@
 # AD-Integrated EDR System
 
-Working prototype of the Active Directory-integrated Endpoint Detection and Response system designed in Chapters 1-3.
+Working prototype of the Active Directory-integrated Endpoint Detection and Response system 
 Endpoint agent → AD identity enrichment → rule-based detection (MITRE ATT&CK) → prioritised tickets → incidents →
 QR + biometric-gated response actions → reports, with audit trail, backup/restore and a security terminal.
 
@@ -51,21 +51,6 @@ cd agent && python -m pytest tests -q                    # Sysmon event parser
 6. **Overview** now shows MTTD / MTTR. **Audit trail** shows every step, including denied attempts.
 7. **Backup & restore**, **Detection rules**, **Security terminal** all demand the same QR + biometric step.
 
-## Design → code traceability
-| Chapter 3 element | Implementation |
-|---|---|
-| Class diagram (12 classes) | `backend/app/models.py` (SystemUser, Endpoint, TelemetryEvent, ADUser, DetectionRule, Alert, Ticket, Incident, IncidentReport, AuthTransaction, AuditEntry, Backup) |
-| Multiplicities (Alert 1..* events, Alert→0..1 Ticket, Incident groups tickets) | `alert_events` table, `Ticket.alert_id` unique, `Ticket.incident_id` |
-| Sequence/communication (event → AD → rule → alert → ticket) | `services/pipeline.py` |
-| State chart: Ticket (Fig 8a) | `services/workflow.py` `TICKET_TRANSITIONS` |
-| State chart: Incident (Fig 8b) | `services/workflow.py` `INCIDENT_TRANSITIONS` (Contained only via verified response) |
-| Process design `executeResponseAction` pre/post | `services/response.py` |
-| QR + biometric AuthTransaction (single use, expiry) | `services/auth_tx.py` |
-| Scoring model (Ch. 2) | `services/scoring.py` |
-| Backup + verification | `services/backup.py` |
-| MTTD / MTTR evaluation metrics | `services/metrics.py`, `GET /api/metrics` |
-
-Every test in `backend/tests/test_system.py` is written against these behaviours, so the test names and assertions can be cited as Chapter 4 evidence.
 
 ## Real Windows endpoint (Sysmon)
 On a Windows VM with Sysmon installed, run from an elevated prompt:
@@ -77,10 +62,3 @@ commands (Windows Firewall rules and `taskkill`); without it they are logged as 
 
 For live Active Directory set `AD_ENABLED=true` and the `AD_*` variables in `backend/.env` (LDAPS, read-only bind account).
 
-## Honest limitations
-- **Biometrics are simulated.** The QR/transaction flow, expiry, attempt limits, single-use and audit are real; the fingerprint/face check is a stand-in (an enrolled secret, stored only as a salted hash). `BIOMETRIC_MODE=simulated`; a WebAuthn verifier would replace `_verify_biometric` in `services/auth_tx.py`.
-- **Agent ↔ server uses a shared API key over HTTP.** Put TLS in front (reverse proxy/VPN) and issue per-endpoint keys before real use.
-- **`disable_ad_account` is recorded, not executed** (the EDR deliberately never writes to AD).
-- The Sysmon reader and `--enforce` actions are written for Windows but could only be unit-tested for parsing here; run them in your lab VM.
-- Detection runs synchronously in the request path; fine for a lab, use a queue for scale.
-- Never run `--attack` or `--enforce` against machines you do not own. The attack chain only sends fake telemetry strings, but `--enforce` changes real firewall settings.
