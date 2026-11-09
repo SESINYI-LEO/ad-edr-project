@@ -5,14 +5,7 @@ Project: _Design and Development of an Active Directory-Integrated EDR System fo
 What it is: endpoint agent → ingestion API → rule-based behaviour detection (14 MITRE ATT&CK-mapped rules) → every event/alert is tied to an **Active Directory identity** (user, department, groups, privilege) → risk-ranked tickets → incident response with **QR-assisted biometric verification** for sensitive actions → tamper-evident audit log, encrypted backups and a web console.
 
 ```
- Windows endpoint(s)            EDR server (FastAPI)                         Browser
- ┌───────────────────┐  HTTPS   ┌─────────────────────────────────────┐     ┌──────────────┐
- │ edr_agent         │ ───────▶ │ /ingest → detection → alerts/tickets│ ◀── │ React console│
- │ Sysmon + Security │ ◀─isolate│ AD lookup (LDAP / lab mock)         │     └──────────────┘
- └───────────────────┘ heartbeat│ biometric verify · audit · backups  │     ┌──────────────┐
-                                │ PostgreSQL / SQLite                 │ ◀── │ Authenticator│
-                                └─────────────────────────────────────┘ QR  │ (phone / sim)│
-                                                                            └──────────────┘
+ Win
 ```
 
 ## Quick start (5 minutes, any OS, no Docker, no database server)
