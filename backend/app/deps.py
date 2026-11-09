@@ -1,5 +1,6 @@
 import secrets
 import uuid
+from datetime import timezone
 
 from fastapi import Depends, Header, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
@@ -15,15 +16,27 @@ from app.security import decode_access_token
 oauth2 = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
-def current_user(token: str = Depends(oauth2), db: Session = Depends(get_db)) -> SystemUser:
+def current_user_any(token: str = Depends(oauth2), db: Session = Depends(get_db)) -> SystemUser:
+    """Authenticated user, even if they still owe a password change (used by /me and the change-password endpoint)."""
     err = HTTPException(401, "Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
     try:
-        username = decode_access_token(token).get("sub")
+        claims = decode_access_token(token)
     except JWTError:
         raise err
+    username = claims.get("sub")
     user = db.scalar(select(SystemUser).where(SystemUser.username == username)) if username else None
     if not user or not user.is_active:
         raise err
+    if user.password_changed_at:  # a password change/reset logs out every older session
+        changed = user.password_changed_at.replace(tzinfo=timezone.utc).timestamp()
+        if float(claims.get("iat", 0)) < changed:
+            raise err
+    return user
+
+
+def current_user(user: SystemUser = Depends(current_user_any)) -> SystemUser:
+    if user.must_change_password:
+        raise HTTPException(403, "Password change required")
     return user
 
 

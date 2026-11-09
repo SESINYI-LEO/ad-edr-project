@@ -3,6 +3,9 @@ import { AuthGateProvider } from './components/AuthGate.jsx'
 import Shell from './components/Shell.jsx'
 import Login from './pages/Login.jsx'
 import Verify from './pages/Verify.jsx'
+import ForgotPassword from './pages/ForgotPassword.jsx'
+import Account from './pages/Account.jsx'
+import Users from './pages/Users.jsx'
 import Overview from './pages/Overview.jsx'
 import Alerts from './pages/Alerts.jsx'
 import Tickets from './pages/Tickets.jsx'
@@ -20,6 +23,7 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/verify/:id" element={<Verify />} />
+      <Route path="/forgot" element={<ForgotPassword />} />
       <Route path="/*" element={<Protected><AuthGateProvider><Shell /></AuthGateProvider></Protected>}>
         <Route index element={<Overview />} />
         <Route path="alerts" element={<Alerts />} />
@@ -33,6 +37,8 @@ export default function App() {
         <Route path="audit" element={<Audit />} />
         <Route path="backups" element={<Backups />} />
         <Route path="terminal" element={<Terminal />} />
+        <Route path="account" element={<Account />} />
+        <Route path="users" element={<Users />} />
       </Route>
     </Routes>
   )

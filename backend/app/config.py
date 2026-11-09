@@ -15,10 +15,18 @@ class Settings(BaseSettings):
     deployment_mode: str = "local"  # local | vpn
 
     # QR + biometric transaction
-    biometric_mode: str = "simulated"  # simulated (dev) | webauthn (production swap-in)
+    # both      = authenticator app (TOTP) if the user enrolled one, otherwise the simulated dev reference (default)
+    # totp      = authenticator app only (use this outside the lab: the demo reference is ignored)
+    # simulated = dev reference only
+    biometric_mode: str = "both"
+    totp_issuer: str = "Sentry EDR"  # label shown inside Microsoft Authenticator / Google Authenticator / Authy
     auth_tx_ttl_seconds: int = 120
     auth_tx_max_attempts: int = 3
     demo_biometric_secret: str = "demo-fingerprint"
+
+    # Password change / reset / authenticator re-enrolment: failed attempts before a temporary lockout
+    recovery_max_attempts: int = 5
+    recovery_lockout_minutes: int = 15
 
     # Active Directory
     ad_enabled: bool = False

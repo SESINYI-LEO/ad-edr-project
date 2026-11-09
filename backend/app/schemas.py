@@ -30,19 +30,59 @@ class CommandResult(BaseModel):
     result: str | None = None
 
 
+Password = Field(min_length=8, max_length=128)
+
+
 class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=60)
-    password: str = Field(min_length=8)
+    password: str = Password
     role: Literal["administrator", "analyst"] = "analyst"
-    email: str = ""
+    email: str = Field(default="", max_length=255)
+    must_change_password: bool = False  # the dashboard ticks this: the new user picks their own password at first login
 
 
-class EnrollIn(BaseModel):
+class UserUpdate(BaseModel):
+    email: str | None = Field(default=None, max_length=255)
+    role: Literal["administrator", "analyst"] | None = None
+    is_active: bool | None = None
+
+
+class AdminPasswordReset(BaseModel):
+    new_password: str | None = Field(default=None, min_length=8, max_length=128)  # omitted = generate a temporary one
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str = Password
+
+
+class PasswordForgot(BaseModel):
+    username: str
+    code: str
+    new_password: str = Password
+
+
+class EnrollIn(BaseModel):  # dev-only simulated reference
     template: str = Field(min_length=4)
+    current_password: str
+
+
+class TotpStart(BaseModel):
+    current_password: str
+    current_code: str | None = None  # needed only when replacing an authenticator that is already enrolled
+
+
+class TotpCode(BaseModel):
+    code: str
+
+
+class TotpRemove(BaseModel):
+    current_password: str
+    code: str
 
 
 class TxCreate(BaseModel):
-    purpose: Literal["response_action", "rule_change", "terminal", "backup_create", "backup_restore", "release_endpoint"]
+    purpose: Literal["response_action", "rule_change", "terminal", "backup_create", "backup_restore", "release_endpoint", "user_admin"]
 
 
 class TxVerify(BaseModel):

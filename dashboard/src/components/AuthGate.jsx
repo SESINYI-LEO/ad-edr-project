@@ -7,6 +7,7 @@ export const useAuthGate = () => useContext(Ctx)
 const LABELS = {
   response_action: 'execute a response action', rule_change: 'change detection rules', terminal: 'run a security tool',
   backup_create: 'create a backup', backup_restore: 'restore a backup', release_endpoint: 'release an isolated endpoint',
+  user_admin: 'change a user account',
 }
 
 /** requireAuth(purpose) -> Promise<transactionId>. Opens the QR + biometric modal; rejects if cancelled/failed. */
@@ -49,13 +50,16 @@ function AuthModal({ purpose, onVerified, onCancel }) {
     return () => clearInterval(t)
   }, [tx, status])
 
-  async function simulatePhone(e) {
+  async function submitCode(e) {
     e.preventDefault()
     try {
       const r = await post(`/api/auth/transactions/${tx.id}/verify`, { credential: cred })
+      setCred('')
       if (r.status === 'verified') onVerified(tx.id)
       else if (r.status === 'failed') setStatus('failed')
-      else setError(`Biometric did not match (attempt ${r.attempts} of 3)`)
+      else setError(tx.method === 'authenticator'
+        ? `Code not accepted (attempt ${r.attempts} of 3). Each code works once: if you just used it, wait for the next one.`
+        : `Biometric did not match (attempt ${r.attempts} of 3)`)
     } catch (e2) { setError(errMsg(e2)) }
   }
 
@@ -63,14 +67,34 @@ function AuthModal({ purpose, onVerified, onCancel }) {
     <div className="modal-back">
       <div className="modal">
         <h3 style={{ marginTop: 0 }}>Verify identity</h3>
-        <p className="muted">To {LABELS[purpose] || purpose}, scan the QR code with your enrolled device and complete the biometric check.</p>
-        {status === 'pending' && tx && (
+        {status === 'pending' && tx && tx.method === 'authenticator' && (
           <>
+            <p className="muted">To {LABELS[purpose] || purpose}, enter the 6-digit code from your authenticator app.</p>
+            <form onSubmit={submitCode}>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input className="inline-input" style={{ flex: 1, fontSize: 18, letterSpacing: '.2em', textAlign: 'center' }} placeholder="123456" value={cred}
+                  onChange={(e) => setCred(e.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={7} autoFocus />
+                <button className="btn" type="submit">Verify</button>
+              </div>
+            </form>
+            <div className="muted" style={{ margin: '10px 0 4px', fontSize: 12 }}>Waiting for verification… expires in {left || '…'}s</div>
+            <details style={{ textAlign: 'left' }}>
+              <summary className="muted" style={{ fontSize: 12, cursor: 'pointer' }}>Approve on another device instead</summary>
+              <div style={{ textAlign: 'center', marginTop: 8 }}>
+                <img alt="QR" className="qr" src={`data:image/png;base64,${tx.qr_png_base64}`} />
+                <div className="mono muted" style={{ fontSize: 11, wordBreak: 'break-all' }}>{tx.verify_url}</div>
+              </div>
+            </details>
+          </>
+        )}
+        {status === 'pending' && tx && tx.method !== 'authenticator' && (
+          <>
+            <p className="muted">To {LABELS[purpose] || purpose}, scan the QR code with your enrolled device and complete the biometric check.</p>
             <img alt="QR" className="qr" src={`data:image/png;base64,${tx.qr_png_base64}`} />
             <div className="mono muted" style={{ fontSize: 11, wordBreak: 'break-all' }}>{tx.verify_url}</div>
             <div className="muted" style={{ margin: '8px 0' }}>Waiting for verification… expires in {left || '…'}s</div>
-            <form onSubmit={simulatePhone} className="sim">
-              <div className="muted" style={{ fontSize: 11, marginBottom: 6 }}>DEV SIMULATOR: stands in for the phone's fingerprint/face check</div>
+            <form onSubmit={submitCode} className="sim">
+              <div className="muted" style={{ fontSize: 11, marginBottom: 6 }}>DEV SIMULATOR: stands in for the phone's fingerprint/face check. Set up an authenticator app under My account for the real thing.</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <input type="password" placeholder="biometric reference" value={cred} onChange={(e) => setCred(e.target.value)} />
                 <button className="btn" type="submit">Verify</button>

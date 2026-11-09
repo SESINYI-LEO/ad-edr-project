@@ -15,6 +15,10 @@ api.interceptors.response.use(
       localStorage.removeItem('edr_token')
       window.location.href = '/login'
     }
+    // signed in with an admin-issued temporary password: nothing else works until it is changed
+    if (e.response?.status === 403 && e.response?.data?.detail === 'Password change required' && !window.location.pathname.startsWith('/account')) {
+      window.location.href = '/account'
+    }
     return Promise.reject(e)
   }
 )
@@ -31,11 +35,16 @@ export function errMsg(e) {
   return e?.message || 'Request failed'
 }
 
+export function saveSession(data) {
+  localStorage.setItem('edr_token', data.access_token)
+  localStorage.setItem('edr_user', JSON.stringify(data.user))
+}
+export const saveUser = (u) => localStorage.setItem('edr_user', JSON.stringify(u))
+
 export async function login(username, password) {
   const f = new URLSearchParams({ username, password })
   const { data } = await api.post('/api/auth/login', f)
-  localStorage.setItem('edr_token', data.access_token)
-  localStorage.setItem('edr_user', JSON.stringify(data.user))
+  saveSession(data)
   return data.user
 }
 

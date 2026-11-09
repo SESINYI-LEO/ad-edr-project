@@ -5,7 +5,7 @@ Windows endpoint agent ──HTTP(S)+API key──▶ FastAPI server ──▶ P
  (Sysmon / simulated)                         │  ├─ services/pipeline   ingest → dedupe → AD enrich → detect → alert → ticket
         ▲                                     │  ├─ services/ad         mock directory or live LDAPS (read-only)
         └── polls approved commands ◀─────────┤  ├─ services/response   executeResponseAction (pre/post conditions)
-                                              │  ├─ services/auth_tx    QR + biometric transactions
+                                              │  ├─ services/auth_tx    QR + biometric (authenticator-app code) transactions
  React dashboard ◀──REST/JWT──────────────────┘  └─ services/backup, reports, metrics, terminal
 ```
 

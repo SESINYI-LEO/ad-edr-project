@@ -14,7 +14,8 @@ export default function Verify() {
     try {
       const r = await post(`/api/auth/transactions/${id}/verify`, { credential: cred })
       setTx({ ...tx, status: r.status })
-      setMsg(r.status === 'verified' ? 'Verified. Return to your computer.' : `Not recognised (attempt ${r.attempts}/3)`)
+      setMsg(r.status === 'verified' ? 'Verified. Return to your computer.' : `Not recognised (attempt ${r.attempts}/3). Each code works once; wait for the next one if you just used it.`)
+      setCred('')
     } catch (x) { setMsg(errMsg(x)) }
   }
   return (
@@ -23,7 +24,9 @@ export default function Verify() {
         <div className="brand">SENTRY<span style={{ color: 'var(--accent)' }}>_</span>EDR</div>
         <p className="muted">Approve: <b>{tx?.purpose?.replace('_', ' ') || '…'}</b> ({tx?.status || '…'})</p>
         {tx?.status === 'pending' && (<>
-          <div className="field"><label>Biometric check (dev simulator)</label><input type="password" value={cred} onChange={(e) => setCred(e.target.value)} /></div>
+          {tx.method === 'authenticator'
+            ? <div className="field"><label>6-digit code from your authenticator app</label><input value={cred} onChange={(e) => setCred(e.target.value)} inputMode="numeric" autoComplete="one-time-code" maxLength={7} autoFocus /></div>
+            : <div className="field"><label>Biometric check (dev simulator)</label><input type="password" value={cred} onChange={(e) => setCred(e.target.value)} /></div>}
           <button className="btn-primary" type="submit">Verify</button>
         </>)}
         {msg && <div className={tx?.status === 'verified' ? 'flash ok' : 'error-text'} style={{ marginTop: 10 }}>{msg}</div>}

@@ -6,8 +6,10 @@ def iso(d):
 
 
 def user_out(u):
-    return {"id": str(u.id), "username": u.username, "role": u.role.value, "is_active": u.is_active,
-            "biometric_enrolled": bool(u.biometric_template_hash), "created_at": iso(u.created_at)}
+    return {"id": str(u.id), "username": u.username, "email": u.email, "role": u.role.value, "is_active": u.is_active,
+            "authenticator_enrolled": bool(u.totp_secret_enc),
+            "biometric_enrolled": bool(u.totp_secret_enc or u.biometric_template_hash),
+            "must_change_password": bool(u.must_change_password), "created_at": iso(u.created_at)}
 
 
 def endpoint_out(e):
