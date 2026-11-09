@@ -44,6 +44,7 @@ def create_app(database_url: str | None = None) -> FastAPI:
     s = get_settings()
     engine = dbm.init_engine(database_url or s.database_url)
     Base.metadata.create_all(engine)
+    dbm.migrate_columns(engine)  # upgrade databases created by an older version
     rules = load_rules(s.rules_file)
     with dbm.SessionLocal() as session:
         seed(session, s, rules)

@@ -1,5 +1,5 @@
 """Database engine/session handling (PostgreSQL in the lab, SQLite for quick local runs)."""
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -42,3 +42,26 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+# Columns added after the first release. create_all() never alters existing tables, so add them in place.
+_NEW_COLUMNS = {
+    "system_users": {"totp_secret_enc": ("VARCHAR(512)", None), "totp_confirmed": ("BOOLEAN", "bool0"),
+                     "totp_last_step": ("INTEGER", "0"), "must_change_password": ("BOOLEAN", "bool0"),
+                     "token_version": ("INTEGER", "0")},
+    "biometric_verifications": {"attempts": ("INTEGER", "0")},
+}
+
+
+def migrate_columns(engine) -> None:
+    insp = inspect(engine)
+    false = "FALSE" if engine.dialect.name == "postgresql" else "0"
+    with engine.begin() as conn:
+        for table, cols in _NEW_COLUMNS.items():
+            if table not in insp.get_table_names():
+                continue
+            have = {c["name"] for c in insp.get_columns(table)}
+            for name, (ddl, default) in cols.items():
+                if name not in have:
+                    d = false if default == "bool0" else default
+                    conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {name} {ddl}" + (f" DEFAULT {d}" if d is not None else "")))

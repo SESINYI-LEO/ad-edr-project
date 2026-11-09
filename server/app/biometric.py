@@ -1,5 +1,10 @@
 """QR-assisted biometric verification protecting privileged operations.
 
+Two interchangeable ways to approve a verification:
+  * enrolled DEVICE (Ed25519): scan the QR, biometric unlocks the device key, which signs the server challenge;
+  * authenticator APP (TOTP): Microsoft Authenticator / Google Authenticator / Authy..., the 6-digit code is typed in
+    (the app's own fingerprint / face lock is what releases the code). Nothing biometric reaches the server either way.
+
 The QR code carries only a transaction id and a one-time nonce. The enrolled device scans it, performs the
 biometric check LOCALLY (unlocking a private key held in its secure hardware) and signs a server challenge. The
 server stores only the device's PUBLIC key, so no biometric data or template ever reaches the server (the same
@@ -18,8 +23,11 @@ from sqlalchemy.orm import Session
 from . import audit
 from .config import Settings
 from .models import BiometricVerification, DeviceCredential, SystemUser, utcnow
+from .security import check_totp, unseal
 
-PURPOSE_RE = r"^(response_action:\d+:(isolate_endpoint|release_endpoint|flag_account)|rule:R\d{3}:(enable|disable)|backup:create|backup:restore:\d+|tool:[a-z_]{1,32})$"
+PURPOSE_RE = (r"^(response_action:\d+:(isolate_endpoint|release_endpoint|flag_account)|rule:R\d{3}:(enable|disable)|backup:create|"
+              r"backup:restore:\d+|tool:[a-z_]{1,32}|user:(reset_password|reset_authenticator):\d+)$")
+MAX_CODE_ATTEMPTS = 3
 
 
 class VerificationError(Exception):
@@ -49,9 +57,15 @@ def _refresh(db: Session, ver: BiometricVerification) -> None:
         audit.write(db, "verify.expired", f"user:{ver.user_id}", ver.user_id, {"verification": ver.id, "purpose": ver.purpose}, "failure")
 
 
+def methods_for(db: Session, user: SystemUser) -> dict:
+    return {"device": db.query(DeviceCredential).filter_by(user_id=user.id).first() is not None,
+            "totp": bool(user.totp_confirmed)}
+
+
 def initiate(db: Session, user: SystemUser, purpose: str, s: Settings) -> BiometricVerification:
-    if not db.query(DeviceCredential).filter_by(user_id=user.id).first():
-        raise VerificationError(409, "No authenticator device enrolled for this account")
+    m = methods_for(db, user)
+    if not (m["device"] or m["totp"]):
+        raise VerificationError(409, "No authenticator enrolled for this account. Link an authenticator app under My account first")
     now = utcnow()
     ver = BiometricVerification(user_id=user.id, purpose=purpose, nonce=secrets.token_urlsafe(24),
                                 challenge=secrets.token_urlsafe(32), status="pending", created_at=now,
@@ -100,6 +114,32 @@ def complete(db: Session, ver_id: int, device_id: int, signature_b64: str) -> Bi
         return ver
     ver.status, ver.verified_at = "verified", utcnow()
     audit.write(db, "verify.verified", f"device:{dev.id}", ver.user_id, {"verification": ver.id, "purpose": ver.purpose})
+    return ver
+
+
+def complete_totp(db: Session, user: SystemUser, ver_id: int, code: str) -> BiometricVerification:
+    """Approve with the 6-digit code from the user's authenticator app (called by the signed-in owner)."""
+    ver = get(db, ver_id)
+    if ver.user_id != user.id:
+        raise VerificationError(404, "Verification not found")
+    if ver.status not in ("pending", "qr_validated"):
+        raise VerificationError(409, f"Verification is {ver.status}")
+    if not user.totp_confirmed:
+        raise VerificationError(409, "No authenticator app is linked to this account")
+    secret = unseal(user.totp_secret_enc)
+    if secret is None:
+        raise VerificationError(409, "Authenticator can no longer be read (server key changed). Ask an administrator to reset it")
+    step = check_totp(secret, code, user.totp_last_step or 0)
+    if step is None:
+        ver.attempts = (ver.attempts or 0) + 1
+        if ver.attempts >= MAX_CODE_ATTEMPTS:
+            ver.status = "failed"
+        audit.write(db, "verify.failed" if ver.status == "failed" else "verify.code_wrong", f"user:{user.id}", user.id,
+                    {"verification": ver.id, "reason": "wrong authenticator code", "attempts": ver.attempts}, "failure")
+        return ver
+    user.totp_last_step = step  # this code cannot be replayed
+    ver.status, ver.verified_at = "verified", utcnow()
+    audit.write(db, "verify.verified", f"user:{user.id}", user.id, {"verification": ver.id, "purpose": ver.purpose, "method": "totp"})
     return ver
 
 

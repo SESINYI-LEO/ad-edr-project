@@ -43,10 +43,25 @@ Open this folder in VS Code → _Run and Debug_: **EDR Server**, **EDR Agent (re
 ## Tests
 
 ```bash
-python -m pytest -q tests                                  # 260 tests, SQLite
+python -m pytest -q tests                                  # 272 tests, SQLite
 TEST_DATABASE_URL=postgresql+psycopg2://user@host/db python -m pytest -q tests   # against PostgreSQL
 python -m pytest -q tests --cov=server/app --cov=agent/edr_agent --cov-branch --cov-report=term-missing
 ```
+
+## Accounts, authenticator app and passwords
+
+- **Link a phone authenticator:** sign in → **My account → Set up authenticator**, scan the QR, type the first 6-digit code. Works with
+  **Microsoft Authenticator** (*+ → Other account (Google, Facebook, etc.)*, not "Work or school account"), Google Authenticator, Authy, 1Password, Aegis
+  or any TOTP app. Turn on the app's fingerprint / face lock so the code needs your biometric. Replacing it needs your password and a current code.
+- **Using it:** every QR-gated action (response actions, rule changes, backups, tool terminal, user resets) now also accepts the 6-digit code in the
+  verification dialog. The Ed25519 browser/phone device flow still works alongside it. Codes are single-use; 3 wrong codes cancel the verification.
+- **Change password:** My account → Change password (signs out every other session). **Forgot password:** link on the sign-in page, using the authenticator
+  code (5 tries / 15 min). Active Directory accounts keep their password in AD.
+- **Administration → Users:** edit name and role, enable/disable, **Reset password…** (temporary password shown once, user must change it at next
+  sign-in) and **Reset authenticator…** for a lost phone. Both resets need QR/authenticator verification and are audited. You cannot demote or disable yourself or the last active administrator.
+- Existing databases are upgraded automatically on start. Keep `SECRET_KEY` stable: it also encrypts the stored authenticator secrets.
+
+The "biometric" is your phone's: the server only sees a one-time code (or a device signature) and cannot confirm that the app's lock is enabled. A user with no authenticator and no phone needs an administrator reset; there is no e-mail channel.
 
 ## Layout
 

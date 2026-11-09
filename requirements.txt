@@ -11,3 +11,4 @@ qrcode>=7.4
 pillow>=10
 python-multipart>=0.0.9
 requests>=2.31
+pyotp>=2.9

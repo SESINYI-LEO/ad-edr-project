@@ -63,6 +63,7 @@ export function VerifyModal({ purpose, onVerified, onClose }) {
   const [state, setState] = useState('starting')
   const [error, setError] = useState('')
   const [left, setLeft] = useState(0)
+  const [code, setCode] = useState('')
   const done = useRef(false)
 
   useEffect(() => {
@@ -89,11 +90,35 @@ export function VerifyModal({ purpose, onVerified, onClose }) {
     try { const r = await respond(ver.qr_payload, match); if (r === 'failed') setState('failed') } catch (e) { setError(e.message) }
   }
 
+  const submitCode = async (e) => {
+    e.preventDefault(); setError('')
+    try {
+      const r = await api(`/verify/${ver.id}/totp`, { method: 'POST', body: { code } })
+      setCode('')
+      if (r.status === 'failed') setState('failed')
+      else if (r.status === 'verified' && !done.current) { done.current = true; setState('verified'); onVerified(ver.id) }
+      else setError(`Code not accepted (attempt ${r.attempts} of 3)`)
+    } catch (x) { setError(x.message) }
+  }
+  const m = ver?.methods || { device: true, totp: false }
+
   return (
     <Modal onClose={onClose}>
       <h2>Biometric verification required</h2>
-      <p className="sub" style={{ color: 'var(--muted)' }}>Scan with your enrolled authenticator device and confirm with your fingerprint.</p>
-      {ver && state === 'pending' && (<>
+      <p className="sub" style={{ color: 'var(--muted)' }}>
+        {m.totp ? 'Open your authenticator app (Microsoft Authenticator, Google Authenticator, …), unlock it with your fingerprint / face and enter the 6-digit code.' : ''}
+        {m.totp && m.device ? ' Or scan the QR with your enrolled device.' : ''}
+        {!m.totp ? 'Scan with your enrolled authenticator device and confirm with your fingerprint.' : ''}
+      </p>
+      {ver && state === 'pending' && m.totp && (
+        <form className="card" onSubmit={submitCode} style={{ marginBottom: 12 }}>
+          <label className="f">Authenticator code
+            <input inputMode="numeric" autoComplete="one-time-code" autoFocus maxLength={7} placeholder="123456" value={code} onChange={(x) => setCode(x.target.value)} /></label>
+          <button className="btn primary" disabled={code.replace(/\D/g, '').length !== 6}>Verify code</button>
+          <span style={{ color: 'var(--muted)', marginLeft: 10 }}>Expires in {left}s · <span className="mono">{purpose}</span></span>
+        </form>
+      )}
+      {ver && state === 'pending' && m.device && (<>
         <img className="qr" alt="Verification QR code" src={ver.qr_png} />
         <div style={{ textAlign: 'center', color: 'var(--muted)' }}>Expires in {left}s · <span className="mono">{purpose}</span></div>
         <div className="card" style={{ marginTop: 12, background: 'var(--surface2)' }}>
@@ -106,7 +131,7 @@ export function VerifyModal({ purpose, onVerified, onClose }) {
         </div>
       </>)}
       {state === 'verified' && <div className="okmsg">✔ Verified. Proceeding…</div>}
-      {state === 'failed' && <div className="err">✖ Verification failed (biometric rejected). Nothing was executed.</div>}
+      {state === 'failed' && <div className="err">✖ Verification failed (wrong code or biometric rejected). Nothing was executed.</div>}
       {state === 'expired' && <div className="err">Verification expired. Close and try again.</div>}
       <Err e={error} />
       <div className="row" style={{ justifyContent: 'flex-end', marginTop: 12 }}><button className="btn" onClick={onClose}>{state === 'verified' ? 'Close' : 'Cancel'}</button></div>

@@ -49,6 +49,12 @@ class SystemUser(Base):
     failed_logins: Mapped[int] = mapped_column(Integer, default=0)
     locked_until: Mapped[datetime | None] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
+    # Authenticator app (TOTP, RFC 6238): Microsoft Authenticator, Google Authenticator, Authy, ...
+    totp_secret_enc: Mapped[str | None] = mapped_column(String(512))   # encrypted at rest, never returned after setup
+    totp_confirmed: Mapped[bool] = mapped_column(Boolean, default=False)
+    totp_last_step: Mapped[int] = mapped_column(Integer, default=0)    # a code is accepted once (replay protection)
+    must_change_password: Mapped[bool] = mapped_column(Boolean, default=False)
+    token_version: Mapped[int] = mapped_column(Integer, default=0)     # bumped on password change/reset: old sessions die
     identity = relationship("ADIdentity")
 
 
@@ -173,6 +179,7 @@ class BiometricVerification(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime)
     consumed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)          # wrong authenticator codes typed
 
 
 class ResponseAction(Base):
